@@ -16,11 +16,26 @@ function AddTask({onClose, open}) {
   const [specialist, setSpecialist] = useState('')
   const [status, setStatus] = useState('created');
 
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      await addDoc(collection(db, 'projects'), {
+        clientName: clientName,
+        specialist: specialist,
+        status: status,
+        created: Timestamp.now()
+      })
+      onClose()
+    } catch (err) {
+      alert(err)
+    }
+  }
+
   /* function to add new task to firestore */
 
   return (
     <Modal modalLable='Agregar Proyecto' onClose={onClose} open={open}>
-      <form className='addTask' name='addTask'>
+      <form onSubmit={handleSubmit} className='addTask' name='addTask'>
         <input 
           type='text' 
           name='clientName' 
@@ -50,20 +65,5 @@ function AddTask({onClose, open}) {
           placeholder='Enter task decription'
           value={description}></textarea>
  */
-
-const handleSubmit = async (e) => {
-  e.preventDefault()
-  try {
-    await addDoc(collection(db, 'tasks'), {
-      title: title,
-      description: description,
-      completed: false,
-      created: Timestamp.now()
-    })
-    onClose()
-  } catch (err) {
-    alert(err)
-  }
-}
 
 export default AddTask
