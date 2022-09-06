@@ -12,11 +12,11 @@ function TaskManager() {
 
   return (
     <div className='taskManager'>
-      <header>Task Manager</header>
+      <header>Administrador de Proyectos</header>
       <div className='taskManager__container'>
         <button 
           onClick={() => setOpenAddModal(true)}>
-          Add task +
+          Agregar Proyecto +
         </button>
         <div className='taskManager__tasks'>
           <Task
