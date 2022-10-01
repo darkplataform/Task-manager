@@ -1,9 +1,12 @@
 import '../task.css'
 import {useState} from 'react'
-import TaskItem from '../TaskItem'
-import EditTask from '../EditTask'
+import ProjectItem from './ProjectItem'
+import EditProject from './EditProject'
+import { doc, deleteDoc} from "firebase/firestore";
+import {db} from '../firebase'
 
-function Project({id, clientName, specialist, status, created}) {
+function Project({id, projectName, clientName, startDate,
+  endDate, specialist, status, created}) {
 
   const [checked, setChecked] = useState(status!=="")
   const [open, setOpen] = useState({edit:false, view:false})
@@ -13,8 +16,16 @@ function Project({id, clientName, specialist, status, created}) {
   }
   
    /* function to update document in firestore */
-
+   
    /* function to delete a document from firstore */ 
+  const handleDelete = async () => {
+    const taskDocRef = doc(db, 'projects', id)
+    try{
+      await deleteDoc(taskDocRef)
+    } catch (err) {
+      alert(err)
+    }
+  }
 
   return (
     <div className={`task ${checked && 'task--borderColor'}`}>
@@ -31,6 +42,7 @@ function Project({id, clientName, specialist, status, created}) {
           onClick={() => setChecked(!checked)} ></label>
       </div>
       <div className='task__body'>
+        <h1>{projectName}</h1>
         <h2>{clientName}</h2>
         <h3>Especialista:{specialist}</h3>
         <h4>{status}</h4>
@@ -40,9 +52,9 @@ function Project({id, clientName, specialist, status, created}) {
             <button 
               className='task__editButton' 
               onClick={() => setOpen({...open, edit: true})}>
-              Editar
+              Actualizar
             </button>
-            <button className='task__deleteButton'>Delete</button>
+            <button className='task__deleteButton' onClick={handleDelete} >Eliminar</button>
           </div>
           <button 
             onClick={() => setOpen({...open, view: true})}>
@@ -52,7 +64,7 @@ function Project({id, clientName, specialist, status, created}) {
       </div>
 
       {open.view &&
-        <TaskItem 
+        <ProjectItem 
           onClose={handleClose} 
           title={clientName} 
           description={specialist} 
@@ -60,10 +72,14 @@ function Project({id, clientName, specialist, status, created}) {
       }
 
       {open.edit &&
-        <EditTask 
+        <EditProject 
           onClose={handleClose} 
-          toEditTitle={clientName} 
-          toEditDescription={specialist} 
+          toEditProjectName={projectName} 
+          toEditClientName={clientName}
+          toEditStartDate={startDate}
+          toEditEndDate={endDate}
+          toEditSpecialist={specialist}
+          toEditStatus={status}
           open={open.edit}
           id={id} />
       }

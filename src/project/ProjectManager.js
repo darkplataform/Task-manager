@@ -1,12 +1,12 @@
-import './taskManager.css'
+import '../taskManager.css'
 //import Task from './Task'
-import AddTask from '../AddTask'
+import AddProject from './AddProject'
 import {useState, useEffect} from 'react'
 import {collection, query, orderBy, onSnapshot} from "firebase/firestore"
 import {db} from '../firebase'
 import Project from './Project'
 
-function TaskManager() {
+function ProjectManager() {
 
   const [openAddModal, setOpenAddModal] = useState(false)
   const [tasks, setTasks] = useState([])
@@ -37,7 +37,10 @@ function TaskManager() {
           <Project
             id={task.id}
             key={task.id}
+            projectName={task.data.projectName}
             clientName={task.data.clientName}
+            startDate={task.data.startDate}
+            endDate={task.data.endDate}
             specialist={task.data.specialist} 
             status={task.data.status}
             created={task.data.created}
@@ -46,11 +49,11 @@ function TaskManager() {
       </div>
 
       {openAddModal &&
-        <AddTask onClose={() => setOpenAddModal(false)} open={openAddModal}/>
+        <AddProject onClose={() => setOpenAddModal(false)} open={openAddModal}/>
       }
 
     </div>
   )
 }
 
-export default TaskManager
+export default ProjectManager
