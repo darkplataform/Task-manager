@@ -1,15 +1,12 @@
 import '../task.css'
 import {useState} from 'react'
-import ProjectItem from './ProjectItem'
-import EditProject from './EditProject'
+import TaskItem from './TaskItem'
+import EditTask from './EditTask'
 import { doc, deleteDoc} from "firebase/firestore";
 import {db} from '../firebase'
-import { generatePath, useNavigate } from "react-router-dom"
 
-function Project({id, projectName, clientName, startDate,
-  endDate, specialist, status, created}) {
-
-    let navigate = useNavigate();
+function Task({id, taskName, instructions, role,
+  address, status, created}) {
 
   const [checked, setChecked] = useState(status!=="")
   const [open, setOpen] = useState({edit:false, view:false})
@@ -22,16 +19,12 @@ function Project({id, projectName, clientName, startDate,
    
    /* function to delete a document from firstore */ 
   const handleDelete = async () => {
-    const taskDocRef = doc(db, 'projects', id)
+    const taskDocRef = doc(db, 'tasks', id)
     try{
       await deleteDoc(taskDocRef)
     } catch (err) {
       alert(err)
     }
-  }
-
-  const handleAddTask = () => {
-    navigate(generatePath('/tasks/:id', { id }))
   }
 
   return (
@@ -49,10 +42,11 @@ function Project({id, projectName, clientName, startDate,
           onClick={() => setChecked(!checked)} ></label>
       </div>
       <div className='task__body'>
-        <h1>{projectName}</h1>
-        <h2>{clientName}</h2>
-        <h3>Especialista:{specialist}</h3>
+        <h1>{taskName}</h1>
+        <h2>Rol:{role}</h2>
+        <h3>Direccion:{address}</h3>
         <h4>{status}</h4>
+        <p>Instrucciones: {instructions} </p>
         <p>Fecha Registro: {created? new Date(created?.seconds * 1000).toLocaleDateString("en-US"):""}</p>
         <div className='task__buttons'>
           <div className='task__deleteNedit'>
@@ -62,7 +56,6 @@ function Project({id, projectName, clientName, startDate,
               Actualizar
             </button>
             <button className='task__deleteButton' onClick={handleDelete} >Eliminar</button>
-            <button className='task__editButton' onClick={handleAddTask} >Agregar Tareas +</button>
           </div>
           <button 
             onClick={() => setOpen({...open, view: true})}>
@@ -72,21 +65,20 @@ function Project({id, projectName, clientName, startDate,
       </div>
 
       {open.view &&
-        <ProjectItem 
+        <TaskItem 
           onClose={handleClose} 
-          title={clientName} 
-          description={specialist} 
+          taskName={taskName} 
+          instructions={instructions} 
           open={open.view} />
       }
 
       {open.edit &&
-        <EditProject 
+        <EditTask 
           onClose={handleClose} 
-          toEditProjectName={projectName} 
-          toEditClientName={clientName}
-          toEditStartDate={startDate}
-          toEditEndDate={endDate}
-          toEditSpecialist={specialist}
+          toEditTaskName={taskName} 
+          toEditInstructions={instructions}
+          toEditRole={role}
+          toEditAddress={address}
           toEditStatus={status}
           open={open.edit}
           id={id} />
@@ -96,4 +88,4 @@ function Project({id, projectName, clientName, startDate,
   )
 }
 
-export default Project
+export default Task
