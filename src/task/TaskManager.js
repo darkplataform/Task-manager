@@ -2,7 +2,7 @@ import '../taskManager.css'
 //import Task from './Task'
 import AddTask from './AddTask'
 import {useState, useEffect} from 'react'
-import { doc, getDoc, collection, query, orderBy, onSnapshot} from "firebase/firestore"
+import { doc, getDoc, collection, query, where, orderBy, onSnapshot} from "firebase/firestore"
 import {db} from '../firebase'
 import Task from './Task'
 import {useParams} from 'react-router-dom';
@@ -36,7 +36,7 @@ function TaskManager() {
     }
     fetchProject()
     
-    const q = query(collection(db, 'tasks'), orderBy('created', 'desc'))
+    const q = query(collection(db, 'tasks'), where('projectId','==',params.id), orderBy('created'))
     onSnapshot(q, (querySnapshot) => {
       setTasks(querySnapshot.docs.map(document => ({
         id: document.id,
